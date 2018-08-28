@@ -24,4 +24,10 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerRepository.findByNumber(number)
                 .orElseThrow(ResourceNotFoundException::new);
     }
+
+    @Override
+    public Owner getByOwnerType(Integer ownerType) {
+        return ownerRepository.findByOwnerType(ownerType)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
 }

@@ -21,6 +21,7 @@ public class Owner {
 
     private String name;
     private int number;
+    private int ownerType;
 
 //    @OneToMany(mappedBy = "owner")
 //    private List<Employee> employees;

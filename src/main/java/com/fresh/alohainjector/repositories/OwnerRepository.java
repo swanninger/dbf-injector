@@ -9,4 +9,6 @@ public interface OwnerRepository extends JpaRepository<Owner, String> {
     Optional<Owner> findByName(String name);
 
     Optional<Owner> findByNumber(Integer number);
+
+    Optional<Owner> findByOwnerType(Integer ownerType);
 }

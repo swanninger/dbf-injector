@@ -34,7 +34,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     public void createEmployee() {
-        Owner owner = ownerService.getByNumber(103);
+        Owner owner = ownerService.getByOwnerType(0);
         Employee emp = new Employee();
         emp.setNumber(9997);
         emp.setBOHUser("9997");

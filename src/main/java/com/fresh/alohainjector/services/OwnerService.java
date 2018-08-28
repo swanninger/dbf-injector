@@ -6,4 +6,6 @@ public interface OwnerService {
     Owner getByName(String name);
 
     Owner getByNumber(Integer number);
+
+    Owner getByOwnerType(Integer ownerType);
 }
