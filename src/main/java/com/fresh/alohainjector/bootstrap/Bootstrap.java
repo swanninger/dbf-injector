@@ -30,8 +30,9 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 //        createEmployee();
-        getAlohaEmployees();
-        getFreshEmployees();
+//        getAlohaEmployees();
+//        getFreshEmployees();
+        employeeService.importEmployees();
     }
 
     public void createEmployee() {
@@ -42,7 +43,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         emp.setFirstName("Craig");
         emp.setLastName("Bootspouse");
         emp.setOwner(owner);
-        employeeService.saveEmployee(emp);
+        employeeService.saveAlohaEmployee(emp);
     }
 
     public void getAlohaEmployees() {
@@ -62,4 +63,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
         }
     }
+
+
 }

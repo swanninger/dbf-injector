@@ -11,5 +11,9 @@ public interface EmployeeService {
 
     List<FreshEmployee> getNewFreshEmployees();
 
-    void saveEmployee(AlohaEmployee alohaEmployee);
+    void saveAlohaEmployee(AlohaEmployee alohaEmployee);
+
+    void saveFreshEmployee(FreshEmployee freshEmployee);
+
+    void importEmployees();
 }

@@ -1,5 +1,6 @@
 package com.fresh.alohainjector.dataFresh.domain;
 
+import com.fresh.alohainjector.dataAloha.domain.JobCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -31,7 +32,15 @@ public class FreshEmployee {
     @ToString.Include
     private String lName;
 
-    private String img_name;
+    @Column(name = "img_name")
+    private String imgName;
 
     private Short bohSecurity;
+
+    private int jobCode1;
+    private int jobCode2;
+    private int jobCode3;
+    private int jobCode4;
+    private int jobCode5;
+    private int jobCode6;
 }

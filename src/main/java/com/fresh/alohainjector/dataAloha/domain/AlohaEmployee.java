@@ -3,7 +3,6 @@ package com.fresh.alohainjector.dataAloha.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -15,7 +14,6 @@ import java.util.UUID;
 @ToString(onlyExplicitlyIncluded = true)
 public class AlohaEmployee {
     @Id
-    @Type(type="uuid-char")
     @GeneratedValue
     private UUID id;
 

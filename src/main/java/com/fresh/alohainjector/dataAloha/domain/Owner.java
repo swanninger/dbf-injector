@@ -13,7 +13,7 @@ import java.util.UUID;
 public class Owner {
 
     @Id
-    @Type(type="uuid-char")
+//    @Type(type="uuid-char")
 //    @Column( columnDefinition = "uuid", updatable = false )
     private UUID id;
 
