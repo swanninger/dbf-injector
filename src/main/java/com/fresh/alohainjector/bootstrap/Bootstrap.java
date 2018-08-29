@@ -1,7 +1,8 @@
 package com.fresh.alohainjector.bootstrap;
 
-import com.fresh.alohainjector.domain.Employee;
-import com.fresh.alohainjector.domain.Owner;
+import com.fresh.alohainjector.dataAloha.domain.AlohaEmployee;
+import com.fresh.alohainjector.dataAloha.domain.Owner;
+import com.fresh.alohainjector.dataFresh.domain.FreshEmployee;
 import com.fresh.alohainjector.services.EmployeeService;
 import com.fresh.alohainjector.services.OwnerService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @Slf4j
@@ -29,13 +29,14 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        createEmployee();
-//        getEmployees();
+//        createEmployee();
+        getAlohaEmployees();
+        getFreshEmployees();
     }
 
     public void createEmployee() {
         Owner owner = ownerService.getByOwnerType(0);
-        Employee emp = new Employee();
+        AlohaEmployee emp = new AlohaEmployee();
         emp.setNumber(9997);
         emp.setBOHUser("9997");
         emp.setFirstName("Craig");
@@ -44,11 +45,20 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         employeeService.saveEmployee(emp);
     }
 
-    public void getEmployees() {
-        List<Employee> employees = employeeService.getAllEmployees();
+    public void getAlohaEmployees() {
+        List<AlohaEmployee> alohaEmployees = employeeService.getAllAlohaEmployees();
 
-        for (Employee employee : employees) {
-            System.out.println(employee);
+        for (AlohaEmployee alohaEmployee : alohaEmployees) {
+            System.out.println(alohaEmployee);
+
+        }
+    }
+
+    public void getFreshEmployees() {
+        List<FreshEmployee> freshEmployees = employeeService.getNewFreshEmployees();
+
+        for (FreshEmployee freshEmployee : freshEmployees) {
+            System.out.println(freshEmployee);
 
         }
     }

@@ -1,7 +1,8 @@
-package com.fresh.alohainjector.domain;
+package com.fresh.alohainjector.dataAloha.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -11,13 +12,15 @@ import java.util.UUID;
 @Table(name = "Employee")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Employee {
+@ToString(onlyExplicitlyIncluded = true)
+public class AlohaEmployee {
     @Id
     @Type(type="uuid-char")
     @GeneratedValue
     private UUID id;
 
     @EqualsAndHashCode.Include
+    @ToString.Include
     @Column(unique=true)
     private Integer number;
 
@@ -25,9 +28,11 @@ public class Employee {
     private String BOHUser;
 
     @EqualsAndHashCode.Include
+    @ToString.Include
     private String firstName;
 
     @EqualsAndHashCode.Include
+    @ToString.Include
     private String lastName;
 
     @ManyToOne

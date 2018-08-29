@@ -1,8 +1,8 @@
 package com.fresh.alohainjector.services;
 
-import com.fresh.alohainjector.domain.Owner;
+import com.fresh.alohainjector.dataAloha.domain.Owner;
 import com.fresh.alohainjector.exception.ResourceNotFoundException;
-import com.fresh.alohainjector.repositories.OwnerRepository;
+import com.fresh.alohainjector.dataAloha.repositories.OwnerRepository;
 import org.springframework.stereotype.Service;
 
 @Service

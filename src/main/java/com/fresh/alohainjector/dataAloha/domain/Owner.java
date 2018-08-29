@@ -1,12 +1,10 @@
-package com.fresh.alohainjector.domain;
+package com.fresh.alohainjector.dataAloha.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +21,4 @@ public class Owner {
     private int number;
     private int ownerType;
 
-//    @OneToMany(mappedBy = "owner")
-//    private List<Employee> employees;
 }
