@@ -4,8 +4,9 @@ import com.fresh.alohainjector.dataAloha.domain.Owner;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface OwnerRepository extends JpaRepository<Owner, String> {
+public interface OwnerRepository extends JpaRepository<Owner, UUID> {
 
     Optional<Owner> findByName(String name);
 

@@ -3,8 +3,10 @@ package com.fresh.alohainjector.dataAloha.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +25,7 @@ public class AlohaEmployee {
     private Integer number;
 
     @Column(unique=true)
+    @EqualsAndHashCode.Include
     private String BOHUser;
 
     @EqualsAndHashCode.Include
@@ -36,6 +39,10 @@ public class AlohaEmployee {
     @ManyToOne
     @JoinColumn(name = "FK_Owner")
     private Owner owner;
+
+    @ToString.Include
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private List<EmployeeJob> employeeJobs;
 
     private Integer employmentStatus = 1;
 

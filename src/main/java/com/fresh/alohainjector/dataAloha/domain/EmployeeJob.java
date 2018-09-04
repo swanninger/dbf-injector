@@ -10,7 +10,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "EmployeeJob")
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 public class EmployeeJob {
 
@@ -24,10 +23,15 @@ public class EmployeeJob {
 
     @ManyToOne
     @JoinColumn(name = "FK_JobCode")
-    private JobCode jobCode;
+    @ToString.Include
+    private AlohaJobCode alohaJobCode;
+
+    @OneToMany(mappedBy = "EmployeeJob")
+    private EmployeeJobPayRateChange employeeJobPayRateChange;
 
     @ManyToOne
     @JoinColumn(name = "FK_Owner")
+    @EqualsAndHashCode.Exclude
     private Owner owner;
 
     private int sortOrder;

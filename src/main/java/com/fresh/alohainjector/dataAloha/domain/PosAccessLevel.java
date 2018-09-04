@@ -4,22 +4,20 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
 @Entity
+@Table(name = "PosAccessLevel")
 @Data
 @ToString(onlyExplicitlyIncluded = true)
-public class Owner {
-
+public class PosAccessLevel {
     @Id
-//    @Type(type="uuid-char")
-//    @Column( columnDefinition = "uuid", updatable = false )
+    @GeneratedValue
     private UUID id;
 
     @ToString.Include
-    private String name;
-
-    private int number;
-    private int ownerType;
+    private Integer number;
 }

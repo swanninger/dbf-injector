@@ -1,7 +1,6 @@
 package com.fresh.alohainjector.dataAloha.domain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
 
@@ -12,15 +11,14 @@ import javax.persistence.Table;
 import java.util.UUID;
 
 @Entity
-@Table(name = "EmployeeJob")
+@Table(name = "JobCode")
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
-public class JobCode {
+public class AlohaJobCode {
     @Id
     @Type(type="uuid-char")
     @GeneratedValue
     private UUID id;
-
+    @ToString.Include
     private int number;
 }
