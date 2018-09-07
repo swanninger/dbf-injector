@@ -12,7 +12,7 @@ import java.util.UUID;
 @Table(name = "EmployeeJobPayRateChange")
 @Data
 @ToString(onlyExplicitlyIncluded = true)
-public class EmployeeJobPayRateChange {
+public class PayRateChange {
     @Id
     @GeneratedValue
     private UUID id;

@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class AlohaEmployee {
     @Id
     @GeneratedValue
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @EqualsAndHashCode.Include
@@ -26,7 +28,7 @@ public class AlohaEmployee {
 
     @Column(unique=true)
     @EqualsAndHashCode.Include
-    private String BOHUser;
+    private String bohUser;
 
     @EqualsAndHashCode.Include
     @ToString.Include
@@ -41,8 +43,10 @@ public class AlohaEmployee {
     private Owner owner;
 
     @ToString.Include
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private List<EmployeeJob> employeeJobs;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    private List<EmployeeJob> employeeJobs = new ArrayList<>();
+
+    private byte[] encryptedTaxIdentifier;
 
     private Integer employmentStatus = 1;
 
@@ -111,4 +115,11 @@ public class AlohaEmployee {
     private String MagcardPasswordHash = "";//""
     private String DallasKeyPasswordHash = "";//""
     private int FailedLoginCount = 0;//0
+
+    public void addEmployeeJob(EmployeeJob employeeJob) {
+        employeeJobs.add(employeeJob);
+
+        employeeJob.setEmployee(this);
+        employeeJob.setOwner(this.owner);
+    }
 }

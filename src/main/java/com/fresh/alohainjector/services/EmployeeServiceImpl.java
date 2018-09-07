@@ -1,20 +1,17 @@
 package com.fresh.alohainjector.services;
 
-import com.fresh.alohainjector.dataAloha.domain.AlohaEmployee;
-import com.fresh.alohainjector.dataAloha.domain.AlohaJobCode;
-import com.fresh.alohainjector.dataAloha.domain.EmployeeJob;
-import com.fresh.alohainjector.dataAloha.domain.Owner;
+import com.fresh.alohainjector.configuration.InjectorConfig;
+import com.fresh.alohainjector.dataAloha.domain.*;
 import com.fresh.alohainjector.dataAloha.repositories.AlohaEmployeeRepository;
 import com.fresh.alohainjector.dataAloha.repositories.AlohaJobCodeRepository;
+import com.fresh.alohainjector.dataAloha.repositories.PosAccessLevelRepository;
 import com.fresh.alohainjector.dataFresh.domain.FreshEmployee;
 import com.fresh.alohainjector.dataFresh.repositories.FreshEmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -22,25 +19,35 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final AlohaEmployeeRepository alohaEmployeeRepository;
     private final FreshEmployeeRepository freshEmployeeRepository;
     private final AlohaJobCodeRepository alohaJobCodeRepository;
+    private final PosAccessLevelRepository posAccessLevelRepository;
     private final OwnerService ownerService;
 
-    public EmployeeServiceImpl(AlohaEmployeeRepository alohaEmployeeRepository, FreshEmployeeRepository freshEmployeeRepository, AlohaJobCodeRepository alohaJobCodeRepository, OwnerService ownerService) {
+    private final InjectorConfig injectorConfig;
+
+    public EmployeeServiceImpl(AlohaEmployeeRepository alohaEmployeeRepository, FreshEmployeeRepository freshEmployeeRepository, AlohaJobCodeRepository alohaJobCodeRepository, PosAccessLevelRepository posAccessLevelRepository, OwnerService ownerService, InjectorConfig injectorConfig) {
         this.alohaEmployeeRepository = alohaEmployeeRepository;
         this.freshEmployeeRepository = freshEmployeeRepository;
         this.alohaJobCodeRepository = alohaJobCodeRepository;
+        this.posAccessLevelRepository = posAccessLevelRepository;
 
         this.ownerService = ownerService;
+        this.injectorConfig = injectorConfig;
     }
 
 
     @Override
-    public List<AlohaEmployee> getAllAlohaEmployees() {
+    public Iterable<AlohaEmployee> getAllAlohaEmployees() {
         return alohaEmployeeRepository.findAll();
     }
 
     @Override
-    public List<FreshEmployee> getNewFreshEmployees() {
+    public Iterable<FreshEmployee> getNewFreshEmployees() {
         return freshEmployeeRepository.findAllByImgNameIgnoreCase("NEW");
+    }
+
+    @Override
+    public Iterable<FreshEmployee> getUpdatedFreshEmployees() {
+        return freshEmployeeRepository.findAllByDtModifiedAfter(injectorConfig.getLastChecked());
     }
 
     @Override
@@ -55,35 +62,45 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void importEmployees() {
-        List<FreshEmployee> employees = getNewFreshEmployees();
+        Iterable<FreshEmployee> employees = getNewFreshEmployees();
         Owner owner = ownerService.getByOwnerType(0);
 
+        LocalDateTime lastChecked = LocalDateTime.MIN;
+
         for (FreshEmployee freshEmployee : employees) {
+            if (freshEmployee.getDtModified().isAfter(lastChecked)) {
+                lastChecked = freshEmployee.getDtModified();
+            }
+
             try {
-                AlohaEmployee alohaEmployee = convertFreshToAloha(freshEmployee, owner);
+
+                AlohaEmployee alohaEmployee = new AlohaEmployee();
+
+                alohaEmployee.setNumber(Integer.parseInt(freshEmployee.getEmpId()));
+                alohaEmployee.setBohUser(freshEmployee.getEmpId());
+                alohaEmployee.setFirstName(freshEmployee.getFName());
+                alohaEmployee.setLastName(freshEmployee.getLName());
+                alohaEmployee.setOwner(owner);
+
+                convertJobs(freshEmployee,alohaEmployee);
+
                 saveAlohaEmployee(alohaEmployee);
 
-                freshEmployee.setImgName("COMPLETED");
-                saveFreshEmployee(freshEmployee);
-                log.info("Employee: " + freshEmployee.getEmpId() + " saved.");
+
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("Employee: " + freshEmployee.getEmpId() + " could not be saved.");
             }
         }
     }
 
-    private AlohaEmployee convertFreshToAloha(FreshEmployee freshEmployee, Owner owner) {
-        AlohaEmployee alohaEmployee = new AlohaEmployee();
+    /**
+     * Convert Jobscodes, PayRates and Access Levels from Fresh to Aloha
+     * @param freshEmployee
+     * @param alohaEmployee
+     */
+    private void convertJobs(FreshEmployee freshEmployee, AlohaEmployee alohaEmployee) {
 
-        alohaEmployee.setNumber(Integer.parseInt(freshEmployee.getEmpId()));
-        alohaEmployee.setBOHUser(freshEmployee.getEmpId());
-        alohaEmployee.setFirstName(freshEmployee.getFName());
-        alohaEmployee.setLastName(freshEmployee.getLName());
-        alohaEmployee.setOwner(owner);
-
-        alohaEmployee = alohaEmployeeRepository.save(alohaEmployee);
-
-        List<EmployeeJob> employeeJobs = new LinkedList<>();
 
         // start arrays
         Short jobCodes[] = {freshEmployee.getJobCode1(), freshEmployee.getJobCode2(), freshEmployee.getJobCode3(),
@@ -99,26 +116,30 @@ public class EmployeeServiceImpl implements EmployeeService {
                 freshEmployee.getAccLvl9(), freshEmployee.getAccLvl10()};
         // end arrays
 
+        // start array mapping
         for (int i = 0; i < 10; i++) {
             if (jobCodes[i] != null) {
-                Optional<AlohaJobCode> alohaJobCode = alohaJobCodeRepository.findByNumber(jobCodes[i]);
+                Optional<AlohaJobCode> alohaJobCode = alohaJobCodeRepository.findByNumber((int) jobCodes[i]);
                 if (alohaJobCode.isPresent()) {
                     EmployeeJob employeeJob = new EmployeeJob();
                     employeeJob.setAlohaJobCode(alohaJobCode.get());
-                    employeeJobs.add(new EmployeeJob());
+                    alohaEmployee.addEmployeeJob(employeeJob);
+
+                    if (acclvls[i] != null && acclvls[i] > 0) {
+                        Optional<PosAccessLevel> posAccessLevel = posAccessLevelRepository.findByNumber((int) acclvls[i]);
+                        posAccessLevel.ifPresent(employeeJob::setPosAccessLevel);
+                    }
+
+                    if (payRates[i] != null) {
+                        PayRateChange payRateChange = new PayRateChange();
+                        payRateChange.setPayRate(payRates[i]);
+                        payRateChange.setEffectiveDate(LocalDateTime.now());
+                        payRateChange.setModifiedDate(LocalDateTime.now());
+                        employeeJob.addPayRateChange(payRateChange);
+                    }
                 }
             }
         }
-
-
-        alohaEmployee.setEmployeeJobs(employeeJobs);
-        //End Employee Jobs
-
-        // TODO: 8/30/2018  map payrates
-
-        // TODO: 8/30/2018 map acclvl
-
-
-        return alohaEmployee;
+        // end array mapping
     }
 }

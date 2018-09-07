@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AlohaJobCodeRepository extends JpaRepository<AlohaJobCode, UUID> {
-    Optional<AlohaJobCode> findByNumber(Short number);
+    Optional<AlohaJobCode> findByNumber(Integer number);
 }

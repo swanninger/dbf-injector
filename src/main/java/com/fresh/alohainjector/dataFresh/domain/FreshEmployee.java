@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Employee")
@@ -32,6 +33,10 @@ public class FreshEmployee {
 
     @Column(name = "img_name")
     private String imgName;
+
+    private String ssn;
+
+    private LocalDateTime dtModified;
 
     private Short bohSecurity;
 

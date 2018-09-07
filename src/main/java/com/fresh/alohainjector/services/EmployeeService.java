@@ -7,13 +7,17 @@ import java.util.List;
 
 public interface EmployeeService {
 
-    List<AlohaEmployee> getAllAlohaEmployees();
+    Iterable<AlohaEmployee> getAllAlohaEmployees();
 
-    List<FreshEmployee> getNewFreshEmployees();
+    Iterable<FreshEmployee> getNewFreshEmployees();
+
+    Iterable<FreshEmployee> getUpdatedFreshEmployees();
 
     AlohaEmployee saveAlohaEmployee(AlohaEmployee alohaEmployee);
 
     FreshEmployee saveFreshEmployee(FreshEmployee freshEmployee);
 
     void importEmployees();
+
+//    void mapAccess();
 }

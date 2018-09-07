@@ -16,7 +16,6 @@ import java.util.UUID;
 @ToString(onlyExplicitlyIncluded = true)
 public class AlohaJobCode {
     @Id
-    @Type(type="uuid-char")
     @GeneratedValue
     private UUID id;
     @ToString.Include
