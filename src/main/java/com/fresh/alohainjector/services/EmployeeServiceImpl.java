@@ -62,45 +62,55 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void importEmployees() {
-        Iterable<FreshEmployee> employees = getNewFreshEmployees();
+        Iterable<FreshEmployee> employees = getUpdatedFreshEmployees();
         Owner owner = ownerService.getByOwnerType(0);
 
-        LocalDateTime lastChecked = LocalDateTime.MIN;
+        LocalDateTime lastChecked = injectorConfig.getLastChecked();
+        try {
+            for (FreshEmployee freshEmployee : employees) {
+                if (freshEmployee.getDtModified().isAfter(lastChecked)) {
+                    lastChecked = freshEmployee.getDtModified();
+                }
 
-        for (FreshEmployee freshEmployee : employees) {
-            if (freshEmployee.getDtModified().isAfter(lastChecked)) {
-                lastChecked = freshEmployee.getDtModified();
+                if (freshEmployee.getTermCode() == null) {
+                    termEmployee(freshEmployee);
+                } else {
+
+                    AlohaEmployee alohaEmployee;
+                    Optional<AlohaEmployee> alohaEmployeeOptional = alohaEmployeeRepository.findByBohUser(freshEmployee.getEmpId());
+
+                    if (alohaEmployeeOptional.isPresent()) {
+                        alohaEmployee = alohaEmployeeOptional.get();
+                    } else {
+                        alohaEmployee = new AlohaEmployee();
+                        alohaEmployee.setNumber(Integer.parseInt(freshEmployee.getEmpId()));
+                        alohaEmployee.setBohUser(freshEmployee.getEmpId());
+                        alohaEmployee.setOwner(owner);
+                    }
+
+                    alohaEmployee.setFirstName(freshEmployee.getFName());
+                    alohaEmployee.setLastName(freshEmployee.getLName());
+
+                    convertJobs(freshEmployee, alohaEmployee);
+
+                    saveAlohaEmployee(alohaEmployee);
+                }
             }
-
-            try {
-
-                AlohaEmployee alohaEmployee = new AlohaEmployee();
-
-                alohaEmployee.setNumber(Integer.parseInt(freshEmployee.getEmpId()));
-                alohaEmployee.setBohUser(freshEmployee.getEmpId());
-                alohaEmployee.setFirstName(freshEmployee.getFName());
-                alohaEmployee.setLastName(freshEmployee.getLName());
-                alohaEmployee.setOwner(owner);
-
-                convertJobs(freshEmployee,alohaEmployee);
-
-                saveAlohaEmployee(alohaEmployee);
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error("Employee: " + freshEmployee.getEmpId() + " could not be saved.");
-            }
+            injectorConfig.setLastChecked(lastChecked);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Error importing employees");
         }
     }
 
     /**
      * Convert Jobscodes, PayRates and Access Levels from Fresh to Aloha
+     *
      * @param freshEmployee
      * @param alohaEmployee
      */
     private void convertJobs(FreshEmployee freshEmployee, AlohaEmployee alohaEmployee) {
-
+        alohaEmployee.getEmployeeJobs().clear();
 
         // start arrays
         Short jobCodes[] = {freshEmployee.getJobCode1(), freshEmployee.getJobCode2(), freshEmployee.getJobCode3(),
@@ -141,5 +151,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
         }
         // end array mapping
+    }
+
+    private void termEmployee(FreshEmployee freshEmployee) {
+
     }
 }

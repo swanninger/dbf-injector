@@ -40,6 +40,8 @@ public class FreshEmployee {
 
     private Short bohSecurity;
 
+    private Short termCode;
+
     private Short jobCode1;
     private Short jobCode2;
     private Short jobCode3;
