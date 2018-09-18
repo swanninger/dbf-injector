@@ -6,6 +6,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+/**
+ * This class helps Spring properly convert Strings in properties to LocalDateTime format
+ */
+
 @Component
 @ConfigurationPropertiesBinding
 public class LocalDateTimeConverter implements Converter<String, LocalDateTime> {

@@ -3,7 +3,6 @@ package com.fresh.alohainjector.dataAloha.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,11 +10,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Employee")
+@Table(name = "TerminatedEmployee")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
-public class AlohaEmployee {
+public class TerminatedAlohaEmployee {
     @Id
     @GeneratedValue
     @EqualsAndHashCode.Include
@@ -44,15 +43,13 @@ public class AlohaEmployee {
 
     @ToString.Include
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EmployeeJob> employeeJobs = new ArrayList<>();
+    private List<TerminatedEmployeeJob> employeeJobs = new ArrayList<>();
 
     private Integer SystemAccess;
 
     @ManyToOne
     @JoinColumn(name = "FK_SecurityRole")
     private SecurityRole SecurityRole;
-
-
 
     private byte[] encryptedTaxIdentifier;
 
@@ -128,7 +125,7 @@ public class AlohaEmployee {
     private String DallasKeyPasswordHash = "";//""
     private int FailedLoginCount = 0;//0
 
-    public void addEmployeeJob(EmployeeJob employeeJob) {
+    public void addEmployeeJob(TerminatedEmployeeJob employeeJob) {
         employeeJobs.add(employeeJob);
 
         employeeJob.setEmployee(this);

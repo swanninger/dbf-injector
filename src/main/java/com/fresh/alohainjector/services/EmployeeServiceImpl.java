@@ -2,9 +2,7 @@ package com.fresh.alohainjector.services;
 
 import com.fresh.alohainjector.configuration.InjectorConfig;
 import com.fresh.alohainjector.dataAloha.domain.*;
-import com.fresh.alohainjector.dataAloha.repositories.AlohaEmployeeRepository;
-import com.fresh.alohainjector.dataAloha.repositories.AlohaJobCodeRepository;
-import com.fresh.alohainjector.dataAloha.repositories.PosAccessLevelRepository;
+import com.fresh.alohainjector.dataAloha.repositories.*;
 import com.fresh.alohainjector.dataFresh.domain.FreshEmployee;
 import com.fresh.alohainjector.dataFresh.repositories.FreshEmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +18,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final FreshEmployeeRepository freshEmployeeRepository;
     private final AlohaJobCodeRepository alohaJobCodeRepository;
     private final PosAccessLevelRepository posAccessLevelRepository;
+    private final SecurityRoleRepository securityRoleRepository;
+    private final TerminatedEmployeeRepository terminatedEmployeeRepository;
     private final OwnerService ownerService;
 
     private final InjectorConfig injectorConfig;
 
-    public EmployeeServiceImpl(AlohaEmployeeRepository alohaEmployeeRepository, FreshEmployeeRepository freshEmployeeRepository, AlohaJobCodeRepository alohaJobCodeRepository, PosAccessLevelRepository posAccessLevelRepository, OwnerService ownerService, InjectorConfig injectorConfig) {
+    public EmployeeServiceImpl(AlohaEmployeeRepository alohaEmployeeRepository, FreshEmployeeRepository freshEmployeeRepository, AlohaJobCodeRepository alohaJobCodeRepository, PosAccessLevelRepository posAccessLevelRepository, SecurityRoleRepository securityRoleRepository, TerminatedEmployeeRepository terminatedEmployeeRepository, OwnerService ownerService, InjectorConfig injectorConfig) {
         this.alohaEmployeeRepository = alohaEmployeeRepository;
         this.freshEmployeeRepository = freshEmployeeRepository;
         this.alohaJobCodeRepository = alohaJobCodeRepository;
         this.posAccessLevelRepository = posAccessLevelRepository;
+        this.securityRoleRepository = securityRoleRepository;
+        this.terminatedEmployeeRepository = terminatedEmployeeRepository;
 
         this.ownerService = ownerService;
         this.injectorConfig = injectorConfig;
@@ -46,8 +48,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Iterable<FreshEmployee> getUpdatedFreshEmployees() {
-        return freshEmployeeRepository.findAllByDtModifiedAfter(injectorConfig.getLastChecked());
+    public Iterable<FreshEmployee> getUpdatedFreshEmployees(LocalDateTime lastChecked) {
+        return freshEmployeeRepository.findAllByDtModifiedAfter(lastChecked);
     }
 
     @Override
@@ -62,31 +64,46 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void importEmployees() {
-        Iterable<FreshEmployee> employees = getUpdatedFreshEmployees();
+        // Get the date of last import from properties
+        LocalDateTime lastChecked = injectorConfig.getLastChecked();
+
+        // If first run set time to Epoch
+        if (lastChecked == null) {
+            lastChecked = LocalDateTime.MIN;
+        }
+
+        Iterable<FreshEmployee> employees = getUpdatedFreshEmployees(lastChecked);
+
+        // grab owner FKey
         Owner owner = ownerService.getByOwnerType(0);
 
-        LocalDateTime lastChecked = injectorConfig.getLastChecked();
         try {
             for (FreshEmployee freshEmployee : employees) {
+                // See if this is the newest record and update last checked accordingly
                 if (freshEmployee.getDtModified().isAfter(lastChecked)) {
                     lastChecked = freshEmployee.getDtModified();
                 }
 
-                if (freshEmployee.getTermCode() == null) {
-                    termEmployee(freshEmployee);
-                } else {
-
+                // If employee has been terminated
+                if (freshEmployee.getTermCode() != null) {
+                    terminateEmployee(freshEmployee);
+                }
+                else {
                     AlohaEmployee alohaEmployee;
-                    Optional<AlohaEmployee> alohaEmployeeOptional = alohaEmployeeRepository.findByBohUser(freshEmployee.getEmpId());
 
+                    //Check if employee is present in Aloha
+                    Optional<AlohaEmployee> alohaEmployeeOptional = alohaEmployeeRepository.findByBohUser(freshEmployee.getEmpId());
                     if (alohaEmployeeOptional.isPresent()) {
                         alohaEmployee = alohaEmployeeOptional.get();
-                    } else {
+                    }
+                    else { // create new employee
                         alohaEmployee = new AlohaEmployee();
                         alohaEmployee.setNumber(Integer.parseInt(freshEmployee.getEmpId()));
                         alohaEmployee.setBohUser(freshEmployee.getEmpId());
                         alohaEmployee.setOwner(owner);
                     }
+                    // Set BOH Security
+                    setBohSecurity(freshEmployee,alohaEmployee);
 
                     alohaEmployee.setFirstName(freshEmployee.getFName());
                     alohaEmployee.setLastName(freshEmployee.getLName());
@@ -94,9 +111,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                     convertJobs(freshEmployee, alohaEmployee);
 
                     saveAlohaEmployee(alohaEmployee);
+                    log.info("Employee " + alohaEmployee.getBohUser() + " saved.");
                 }
             }
             injectorConfig.setLastChecked(lastChecked);
+
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Error importing employees");
@@ -110,6 +129,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param alohaEmployee
      */
     private void convertJobs(FreshEmployee freshEmployee, AlohaEmployee alohaEmployee) {
+        //Delete job entries from aloha to prevent duplication
         alohaEmployee.getEmployeeJobs().clear();
 
         // start arrays
@@ -153,7 +173,58 @@ public class EmployeeServiceImpl implements EmployeeService {
         // end array mapping
     }
 
-    private void termEmployee(FreshEmployee freshEmployee) {
+    private void setBohSecurity(FreshEmployee freshEmployee, AlohaEmployee alohaEmployee) {
+        // Set BOH Security
+        if (freshEmployee.getBohSecurity() == 0){
+            alohaEmployee.setSystemAccess(0);
+            alohaEmployee.setSecurityRole(null);
+        }else {
+            alohaEmployee.setSystemAccess(2);
+            Optional<SecurityRole> role = securityRoleRepository.findByNumber((int) freshEmployee.getBohSecurity());
+            role.ifPresent(alohaEmployee::setSecurityRole);
+        }
+    }
 
+    private void terminateEmployee(FreshEmployee freshEmployee) {
+        //Check if employee is present in Aloha
+        Optional<AlohaEmployee> alohaEmployeeOptional = alohaEmployeeRepository.findByBohUser(freshEmployee.getEmpId());
+        if (alohaEmployeeOptional.isPresent()) {
+            // Convert to terminated employee before deleting
+            AlohaEmployee alohaEmployee = alohaEmployeeOptional.get();
+            TerminatedAlohaEmployee termEmployee = new TerminatedAlohaEmployee();
+
+            termEmployee.setFirstName(alohaEmployee.getFirstName());
+            termEmployee.setLastName(alohaEmployee.getLastName());
+            termEmployee.setOwner(alohaEmployee.getOwner());
+            termEmployee.setSystemAccess(alohaEmployee.getSystemAccess());
+            termEmployee.setSecurityRole(alohaEmployee.getSecurityRole());
+            termEmployee.setNumber(alohaEmployee.getNumber());
+            termEmployee.setBohUser(alohaEmployee.getBohUser());
+
+            for (EmployeeJob employeeJob : alohaEmployee.getEmployeeJobs()) {
+                TerminatedEmployeeJob termJob = new TerminatedEmployeeJob();
+
+                termJob.setAlohaJobCode(employeeJob.getAlohaJobCode());
+                termJob.setPosAccessLevel(employeeJob.getPosAccessLevel());
+                termEmployee.addEmployeeJob(termJob);
+
+                for (PayRateChange payRateChange : employeeJob.getPayRateChanges()) {
+                    TerminatedPayRateChange termPayRateChange = new TerminatedPayRateChange();
+
+                    termPayRateChange.setPayRate(payRateChange.getPayRate());
+                    termPayRateChange.setEffectiveDate(payRateChange.getEffectiveDate());
+                    termPayRateChange.setModifiedDate(payRateChange.getModifiedDate());
+                    termJob.addPayRateChange(termPayRateChange);
+                }
+
+            }
+            terminatedEmployeeRepository.save(termEmployee);
+            alohaEmployeeRepository.delete(alohaEmployee);
+
+            log.info(freshEmployee.getEmpId() + " removed.");
+        }
+        else{
+            log.info("Employee " + freshEmployee.getEmpId() + " not present.");
+        }
     }
 }

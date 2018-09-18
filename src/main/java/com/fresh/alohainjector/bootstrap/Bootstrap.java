@@ -37,9 +37,9 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 //        createEmployee();
 //        getAlohaEmployees();
 //        getFreshEmployees();
-//        employeeService.importEmployees();
+        employeeService.importEmployees();
 //        employeeService.mapAccess();
-        log.info(injectorConfig.getLastChecked().toString());
+//        log.info(injectorConfig.getLastChecked().toString());
     }
 
     public void createEmployee() {

@@ -11,4 +11,6 @@ public interface AlohaEmployeeRepository extends JpaRepository<AlohaEmployee, UU
     List<AlohaEmployee> findAllByBohUser(Iterable<String> empIds);
 
     Optional<AlohaEmployee> findByBohUser(String empId);
+
+    void deleteByBohUser(String empId);
 }
