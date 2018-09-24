@@ -21,10 +21,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final SecurityRoleRepository securityRoleRepository;
     private final TerminatedEmployeeRepository terminatedEmployeeRepository;
     private final OwnerService ownerService;
+    private final MessageService messageService;
 
     private final InjectorConfig injectorConfig;
 
-    public EmployeeServiceImpl(AlohaEmployeeRepository alohaEmployeeRepository, FreshEmployeeRepository freshEmployeeRepository, AlohaJobCodeRepository alohaJobCodeRepository, PosAccessLevelRepository posAccessLevelRepository, SecurityRoleRepository securityRoleRepository, TerminatedEmployeeRepository terminatedEmployeeRepository, OwnerService ownerService, InjectorConfig injectorConfig) {
+    public EmployeeServiceImpl(AlohaEmployeeRepository alohaEmployeeRepository, FreshEmployeeRepository freshEmployeeRepository, AlohaJobCodeRepository alohaJobCodeRepository, PosAccessLevelRepository posAccessLevelRepository, SecurityRoleRepository securityRoleRepository, TerminatedEmployeeRepository terminatedEmployeeRepository, OwnerService ownerService, MessageService messageService, InjectorConfig injectorConfig) {
         this.alohaEmployeeRepository = alohaEmployeeRepository;
         this.freshEmployeeRepository = freshEmployeeRepository;
         this.alohaJobCodeRepository = alohaJobCodeRepository;
@@ -33,6 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.terminatedEmployeeRepository = terminatedEmployeeRepository;
 
         this.ownerService = ownerService;
+        this.messageService = messageService;
         this.injectorConfig = injectorConfig;
     }
 
@@ -49,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Iterable<FreshEmployee> getUpdatedFreshEmployees(LocalDateTime lastChecked) {
-        return freshEmployeeRepository.findAllByDtModifiedAfter(lastChecked);
+        return freshEmployeeRepository.findAllByDtModifiedAfterAndImgNameIgnoreCase(lastChecked, "COMPLETED");
     }
 
     @Override
@@ -64,8 +66,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void importEmployees() {
+        log.warn("Polling Emp Maintenance for updated records.");
         // Get the date of last import from properties
         LocalDateTime lastChecked = injectorConfig.getLastChecked();
+
+        StringBuilder msg = new StringBuilder();
 
         // If first run set time to Epoch
         if (lastChecked == null) {
@@ -87,6 +92,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 // If employee has been terminated
                 if (freshEmployee.getTermCode() != null) {
                     terminateEmployee(freshEmployee);
+                    msg.append(freshEmployee.getEmpId() + " terminated.\n");
                 }
                 else {
                     AlohaEmployee alohaEmployee;
@@ -111,19 +117,22 @@ public class EmployeeServiceImpl implements EmployeeService {
                     convertJobs(freshEmployee, alohaEmployee);
 
                     saveAlohaEmployee(alohaEmployee);
-                    log.info("Employee " + alohaEmployee.getBohUser() + " saved.");
+                    log.warn("Employee " + alohaEmployee.getBohUser() + " saved.");
+                    msg.append(freshEmployee.getEmpId() + " added.\n");
                 }
             }
             injectorConfig.setLastChecked(lastChecked);
 
         } catch (Exception e) {
             e.printStackTrace();
+            messageService.sendCmdMsg("Error importing employees");
             log.error("Error importing employees");
         }
+        messageService.sendCmdMsg("Employees Updated\n" + msg);
     }
 
     /**
-     * Convert Jobscodes, PayRates and Access Levels from Fresh to Aloha
+     * Convert JobCodes, PayRates and Access Levels from Fresh to Aloha
      *
      * @param freshEmployee
      * @param alohaEmployee

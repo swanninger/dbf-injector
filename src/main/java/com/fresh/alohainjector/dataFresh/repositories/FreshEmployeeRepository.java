@@ -10,4 +10,6 @@ public interface FreshEmployeeRepository extends JpaRepository<FreshEmployee, St
     List<FreshEmployee> findAllByImgNameIgnoreCase (String img_name);
 
     List<FreshEmployee> findAllByDtModifiedAfter(LocalDateTime lastChecked);
+
+    List<FreshEmployee> findAllByDtModifiedAfterAndImgNameIgnoreCase(LocalDateTime lastChecked, String img_name);
 }
