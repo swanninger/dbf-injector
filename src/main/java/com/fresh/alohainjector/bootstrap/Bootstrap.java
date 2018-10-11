@@ -34,14 +34,10 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-//        createEmployee();
-//        getAlohaEmployees();
-//        getFreshEmployees();
         employeeService.importEmployees();
-//        employeeService.mapAccess();
-//        log.info(injectorConfig.getLastChecked().toString());
     }
 
+    //Test classes
     public void createEmployee() {
         Owner owner = ownerService.getByOwnerType(0);
         AlohaEmployee emp = new AlohaEmployee();

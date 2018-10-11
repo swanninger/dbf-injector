@@ -92,7 +92,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 // If employee has been terminated
                 if (freshEmployee.getTermCode() != null) {
                     terminateEmployee(freshEmployee);
-                    msg.append(freshEmployee.getEmpId() + " terminated.\n");
+                    msg.append(freshEmployee.getEmpId()).append(" terminated.\n");
                 }
                 else {
                     AlohaEmployee alohaEmployee;
@@ -118,7 +118,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
                     saveAlohaEmployee(alohaEmployee);
                     log.warn("Employee " + alohaEmployee.getBohUser() + " saved.");
-                    msg.append(freshEmployee.getEmpId() + " added.\n");
+                    msg.append(freshEmployee.getEmpId()).append(" added.\n");
                 }
             }
             injectorConfig.setLastChecked(lastChecked);
@@ -129,6 +129,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             log.error("Error importing employees");
         }
         messageService.sendCmdMsg("Employees Updated\n" + msg);
+        log.warn("Employees Updated");
     }
 
     /**
