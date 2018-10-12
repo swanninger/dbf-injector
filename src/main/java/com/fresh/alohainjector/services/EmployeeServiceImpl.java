@@ -118,7 +118,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
                     saveAlohaEmployee(alohaEmployee);
                     log.warn("Employee " + alohaEmployee.getBohUser() + " saved.");
-                    msg.append(freshEmployee.getEmpId()).append(" added.\n");
+                    msg.append(",").append(freshEmployee.getEmpId());
                 }
             }
             injectorConfig.setLastChecked(lastChecked);
@@ -128,7 +128,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             messageService.sendCmdMsg("Error importing employees");
             log.error("Error importing employees");
         }
-        messageService.sendCmdMsg("Employees Updated\n" + msg);
+        messageService.sendCmdMsg("Employees Updated");
         log.warn("Employees Updated");
     }
 

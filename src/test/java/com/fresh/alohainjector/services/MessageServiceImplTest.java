@@ -28,7 +28,7 @@ public class MessageServiceImplTest {
 
     @Test
     public void sendCmdMsg() {
-        messageService.sendCmdMsg("Hello World");
+        messageService.sendCmdMsg("Hello\n World");
 
     }
 }
