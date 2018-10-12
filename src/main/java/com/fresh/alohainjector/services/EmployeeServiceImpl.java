@@ -98,7 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                     AlohaEmployee alohaEmployee;
 
                     //Check if employee is present in Aloha
-                    Optional<AlohaEmployee> alohaEmployeeOptional = alohaEmployeeRepository.findByBohUser(freshEmployee.getEmpId());
+                    Optional<AlohaEmployee> alohaEmployeeOptional = alohaEmployeeRepository.findByNumber(Integer.parseInt(freshEmployee.getEmpId()));
                     if (alohaEmployeeOptional.isPresent()) {
                         alohaEmployee = alohaEmployeeOptional.get();
                     }
