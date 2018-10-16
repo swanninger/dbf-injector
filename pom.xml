@@ -5,7 +5,7 @@
 
     <groupId>com.fresh</groupId>
     <artifactId>aloha-injector</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>aloha-injector</name>
@@ -58,7 +58,7 @@
     </dependencies>
 
     <build>
-        <finalName>aloha-injector</finalName>
+        <finalName>aloha-injector_1.0</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

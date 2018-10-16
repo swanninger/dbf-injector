@@ -163,6 +163,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 if (alohaJobCode.isPresent()) {
                     EmployeeJob employeeJob = new EmployeeJob();
                     employeeJob.setAlohaJobCode(alohaJobCode.get());
+                    employeeJob.setSortOrder(i + 1);
                     alohaEmployee.addEmployeeJob(employeeJob);
 
                     if (acclvls[i] != null && acclvls[i] > 0) {
