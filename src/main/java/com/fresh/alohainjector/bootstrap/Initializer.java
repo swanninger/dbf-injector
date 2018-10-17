@@ -18,16 +18,14 @@ import java.util.Properties;
 
 @Component
 @Slf4j
-public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
+public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private final EmployeeService employeeService;
     private final OwnerService ownerService;
-    private final InjectorConfig injectorConfig;
 
-    public Bootstrap(EmployeeService employeeService, OwnerService ownerService, InjectorConfig injectorConfig) {
+    public Initializer(EmployeeService employeeService, OwnerService ownerService) {
         this.employeeService = employeeService;
         this.ownerService = ownerService;
-        this.injectorConfig = injectorConfig;
     }
 
 
