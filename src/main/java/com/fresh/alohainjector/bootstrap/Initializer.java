@@ -1,6 +1,5 @@
 package com.fresh.alohainjector.bootstrap;
 
-import com.fresh.alohainjector.configuration.InjectorConfig;
 import com.fresh.alohainjector.dataAloha.domain.AlohaEmployee;
 import com.fresh.alohainjector.dataAloha.domain.Owner;
 import com.fresh.alohainjector.dataFresh.domain.FreshEmployee;
@@ -32,7 +31,9 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        log.warn("Injector Start.");
         employeeService.importEmployees();
+        log.warn("Injection complete.");
     }
 
     //Test classes
