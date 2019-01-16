@@ -1,6 +1,5 @@
 package com.fresh.alohainjector.bootstrap;
 
-import com.fresh.alohainjector.configuration.InjectorConfig;
 import com.fresh.alohainjector.dataAloha.domain.AlohaEmployee;
 import com.fresh.alohainjector.dataAloha.domain.Owner;
 import com.fresh.alohainjector.dataFresh.domain.FreshEmployee;
@@ -18,23 +17,23 @@ import java.util.Properties;
 
 @Component
 @Slf4j
-public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
+public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private final EmployeeService employeeService;
     private final OwnerService ownerService;
-    private final InjectorConfig injectorConfig;
 
-    public Bootstrap(EmployeeService employeeService, OwnerService ownerService, InjectorConfig injectorConfig) {
+    public Initializer(EmployeeService employeeService, OwnerService ownerService) {
         this.employeeService = employeeService;
         this.ownerService = ownerService;
-        this.injectorConfig = injectorConfig;
     }
 
 
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        log.warn("Injector Start.");
         employeeService.importEmployees();
+        log.warn("Injection complete.");
     }
 
     //Test classes

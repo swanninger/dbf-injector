@@ -97,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 else {
                     AlohaEmployee alohaEmployee;
 
-                    //Check if employee is present in Aloha
+                    //Check if employee is present in Aloha, checking by number since its an integer and isn't affected by leading zeros
                     Optional<AlohaEmployee> alohaEmployeeOptional = alohaEmployeeRepository.findByNumber(Integer.parseInt(freshEmployee.getEmpId()));
                     if (alohaEmployeeOptional.isPresent()) {
                         alohaEmployee = alohaEmployeeOptional.get();
