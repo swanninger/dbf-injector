@@ -46,6 +46,9 @@ public class AlohaEmployee {
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EmployeeJob> employeeJobs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EmployeePreference> employeePreference = new ArrayList<>();
+
     private Integer SystemAccess;
 
     @ManyToOne

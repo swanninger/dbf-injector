@@ -229,7 +229,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                 }
 
             }
-            terminatedEmployeeRepository.save(termEmployee);
+
+            try {
+                terminatedEmployeeRepository.save(termEmployee);
+            } catch (Exception e) {
+               log.error(e.toString());
+            }
             alohaEmployeeRepository.delete(alohaEmployee);
 
             log.info(freshEmployee.getEmpId() + " removed.");
