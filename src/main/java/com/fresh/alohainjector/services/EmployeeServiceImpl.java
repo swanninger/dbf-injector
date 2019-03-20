@@ -91,8 +91,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
                 // If employee has been terminated
                 if (freshEmployee.getTermCode() != null) {
-                    terminateEmployee(freshEmployee);
-                    msg.append(freshEmployee.getEmpId()).append(" terminated.\n");
+                    try {
+                        terminateEmployee(freshEmployee);
+                        msg.append(freshEmployee.getEmpId()).append(" terminated.\n");
+                    } catch (Exception e) {
+                        log.error("Error deleting employee " + freshEmployee.getEmpId() + e.toString());
+                    }
                 }
                 else {
                     AlohaEmployee alohaEmployee;
