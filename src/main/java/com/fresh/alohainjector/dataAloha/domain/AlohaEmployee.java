@@ -46,10 +46,10 @@ public class AlohaEmployee {
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EmployeeJob> employeeJobs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "employee", orphanRemoval = true)
     private List<EmployeePreference> employeePreference = new ArrayList<>();
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "employee", orphanRemoval = true)
     private List<EmployeeBOHPasswordHistory> employeeBOHPasswordHistory = new ArrayList<>();
 
     private Integer SystemAccess;
