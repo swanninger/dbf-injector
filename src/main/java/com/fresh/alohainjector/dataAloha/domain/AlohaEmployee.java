@@ -127,7 +127,7 @@ public class AlohaEmployee {
     private boolean K4ExemptFromWithholding = false;//false
     private String EmailAddress = "";//""
     private String SmsAddress = "";// ""
-    private String BOHPasswordHash = "";//""
+//    private String BOHPasswordHash = "";//""
     private boolean UseDallasKey = false;//false
     private String PasswordHash = "";//""
     private String MagcardPasswordHash = "";//""
