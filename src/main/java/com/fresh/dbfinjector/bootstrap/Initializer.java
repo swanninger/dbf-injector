@@ -1,30 +1,32 @@
 package com.fresh.dbfinjector.bootstrap;
 
-import com.fresh.dbfinjector.dataAloha.domain.AlohaEmployee;
-import com.fresh.dbfinjector.dataAloha.domain.Owner;
+import com.fresh.dbfinjector.configuration.InjectorConfig;
 import com.fresh.dbfinjector.dataFresh.domain.FreshEmployee;
+import com.fresh.dbfinjector.services.EmpDBFService;
 import com.fresh.dbfinjector.services.EmployeeService;
-import com.fresh.dbfinjector.services.OwnerService;
 import lombok.extern.slf4j.Slf4j;
+import nl.knaw.dans.common.dbflib.NumberValue;
+import nl.knaw.dans.common.dbflib.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
-import java.time.LocalDateTime;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
 public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private final EmployeeService employeeService;
-    private final OwnerService ownerService;
+    private final InjectorConfig injectorConfig;
+    private final EmpDBFService empDBFService;
 
-    public Initializer(EmployeeService employeeService, OwnerService ownerService) {
+    public Initializer(EmployeeService employeeService, InjectorConfig injectorConfig, EmpDBFService empDBFService) {
         this.employeeService = employeeService;
-        this.ownerService = ownerService;
+        this.injectorConfig = injectorConfig;
+        this.empDBFService = empDBFService;
     }
 
 
@@ -33,28 +35,14 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         log.warn("Injector Start.");
 //        employeeService.importEmployees();
+//        testProperties();
+//        updateEmployeeTest();
         log.warn("Injection complete.");
     }
 
     //Test classes
     public void createEmployee() {
-        Owner owner = ownerService.getByOwnerType(0);
-        AlohaEmployee emp = new AlohaEmployee();
-        emp.setNumber(9997);
-        emp.setBohUser("9997");
-        emp.setFirstName("Craig");
-        emp.setLastName("Bootspouse");
-        emp.setOwner(owner);
-        employeeService.saveAlohaEmployee(emp);
-    }
 
-    public void getAlohaEmployees() {
-        Iterable<AlohaEmployee> alohaEmployees = employeeService.getAllAlohaEmployees();
-
-        for (AlohaEmployee alohaEmployee : alohaEmployees) {
-            System.out.println(alohaEmployee);
-
-        }
     }
 
     public void getFreshEmployees() {
@@ -67,49 +55,15 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     public void testProperties() {
-        Properties prop = new Properties();
-        InputStream input = null;
-        OutputStream output = null;
+        log.warn(injectorConfig.getNewDataPath());
+    }
 
-        try {
+    public void updateEmployeeTest() {
+        Map<String, Value> employeeData = new HashMap<>();
+        employeeData.put("ID", new NumberValue(108));
+        employeeData.put("OWNERID", new NumberValue(1));
 
-            input = new FileInputStream("application.properties");
-
-            // load a properties file
-            prop.load(input);
-            log.info("props loaded");
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        try {
-            output = new FileOutputStream("application.properties");
-
-            prop.setProperty("injector.lastChecked", LocalDateTime.now().toString());
-            log.info("date set");
-
-            prop.store(output,null);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        empDBFService.updateEmployee(employeeData);
     }
 
 

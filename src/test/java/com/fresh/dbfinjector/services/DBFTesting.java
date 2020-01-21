@@ -103,7 +103,7 @@ public class DBFTesting {
                 if (record.getNumberValue("ID").intValue() == 109) {
                     Map<String, Value> valueMap = new HashMap<>();
 
-                    valueMap.put("OWNERID", new NumberValue(1));
+                    valueMap.put("OWNERID", new StringValue("" + 1));
                     valueMap.put("FIRSTNAME", new StringValue("Ronnie"));
 
                     Record newRecord = new Record(valueMap);

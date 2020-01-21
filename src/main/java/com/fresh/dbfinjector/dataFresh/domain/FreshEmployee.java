@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,11 +36,21 @@ public class FreshEmployee {
     private String imgName;
 
     private String ssn;
+    private String adrs1;
+    private String adrs2;
+    private String city;
+    private String st;
+    private String zip;
+    private String gender;
+    private LocalDateTime dob;
+    private String marital;
+    private LocalDate dthire;
+
+
 
     private LocalDateTime dtModified;
 
     private Short bohSecurity;
-
     private Short termCode;
 
     private Short jobCode1;

@@ -31,15 +31,15 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/nl.knaw.dans.common/dans-dbf-lib -->
-<!--        <dependency>-->
-<!--            <groupId>nl.knaw.dans.common</groupId>-->
-<!--            <artifactId>dans-dbf-lib</artifactId>-->
-<!--            <version>1.0.0-beta-10</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>nl.knaw.dans.common</groupId>
+            <artifactId>dans-dbf-lib</artifactId>
+            <version>1.0.0-beta-10</version>
+        </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
-            <artifactId>jaybird</artifactId>
-            <version>2.2.5</version>
+            <artifactId>jaybird-jdk18</artifactId>
+            <version>3.0.8</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -98,14 +98,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>nuiton</id>
-            <name>Nuiton</name>
-            <url>http://maven.nuiton.org/release/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -121,14 +113,6 @@
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
             <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>nuiton</id>
-            <name>Nuiton</name>
-            <url>http://maven.nuiton.org/release/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

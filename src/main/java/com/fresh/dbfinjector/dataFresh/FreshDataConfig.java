@@ -37,7 +37,7 @@ public class FreshDataConfig {
             @Qualifier("freshDataSource") DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
-                .packages("com.fresh.alohainjector.dataFresh.domain")
+                .packages("com.fresh.dbfinjector.dataFresh.domain")
                 .persistenceUnit("fresh")
                 .build();
     }
