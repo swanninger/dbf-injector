@@ -35,19 +35,6 @@ public class FreshEmployee {
     @Column(name = "img_name")
     private String imgName;
 
-    private String ssn;
-    private String adrs1;
-    private String adrs2;
-    private String city;
-    private String st;
-    private String zip;
-    private String gender;
-    private LocalDateTime dob;
-    private String marital;
-    private LocalDate dthire;
-
-
-
     private LocalDateTime dtModified;
 
     private Short bohSecurity;

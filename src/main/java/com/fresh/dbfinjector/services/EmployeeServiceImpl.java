@@ -89,15 +89,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         Map<String, Value> empData = new HashMap<>();
         empData.put("ID", new StringValue(freshEmployee.getEmpId()));
         empData.put("USERNUMBER", new StringValue(freshEmployee.getEmpId()));
-        empData.put("SSN", new StringValue(freshEmployee.getSsn()));
-        empData.put("SSNTEXT", new StringValue(freshEmployee.getSsn()));
+        empData.put("SSN", new StringValue("000000000"));
+        empData.put("SSNTEXT", new StringValue("000000000"));
         empData.put("FIRSTNAME", new StringValue(freshEmployee.getFName()));
         empData.put("LASTNAME", new StringValue(freshEmployee.getLName()));
         empData.put("NICKNAME", new StringValue(freshEmployee.getFName()));
-        empData.put("ADDRESS1", new StringValue(freshEmployee.getAdrs1()));
-        empData.put("ADDRESS2", new StringValue(freshEmployee.getAdrs2()));
-        empData.put("CITY", new StringValue(freshEmployee.getCity()));
-        empData.put("STATE", new StringValue(freshEmployee.getSt()));
+
+
         empData.put("", new StringValue(freshEmployee.getEmpId()));
 
         return empData;
