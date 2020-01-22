@@ -1,9 +1,10 @@
 package com.fresh.dbfinjector.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.Properties;
-
+@Slf4j
 @Service
 public class ApplicationPropertyServiceImpl implements ApplicationPropertyService {
     private final String DEFAULT_PATH = "application.properties";
@@ -36,7 +37,7 @@ public class ApplicationPropertyServiceImpl implements ApplicationPropertyServic
             // load a properties file
             prop.load(input);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.warn(DEFAULT_PATH + " does not exist. Will create.");
         } finally {
             if (input != null) {
                 try {

@@ -13,6 +13,8 @@ public interface EmpDBFService {
 
     void updateEmployee(Map<String, Value> employeeData);
 
+    void updateEmployees(Map<Integer, Map<String, Value>> employeeData);
+
     void addEmployee(Map<String, Value> employeeData);
 
     Boolean terminateEmployee(int id);

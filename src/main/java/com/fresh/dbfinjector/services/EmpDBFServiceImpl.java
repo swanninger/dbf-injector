@@ -35,7 +35,7 @@ public class EmpDBFServiceImpl implements EmpDBFService {
         return null;
     }
 
-    @Override
+    @Override // slOOOOOOOOwwww
     public void updateEmployee(Map<String, Value> employeeData) {
         final Table table = new Table(new File(injectorConfig.getNewDataPath() + "emp.dbf"));
         Record newRecord = new Record(employeeData);
@@ -56,6 +56,41 @@ public class EmpDBFServiceImpl implements EmpDBFService {
             }
             if (!exists){ //if employee is not in DBF then append
                 table.addRecord(newRecord);
+            }
+        } catch (IOException | DbfLibException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                table.close();
+            } catch (IOException ex) {
+                log.error("Unable to close the table");
+            }
+        }
+    }
+
+    @Override
+    public void updateEmployees(Map<Integer, Map<String, Value>> employees) {
+        final Table table = new Table(new File(injectorConfig.getNewDataPath() + "emp.dbf"));
+
+        try {
+            table.open();
+            Record record;
+            for (int i = 0; i < table.getRecordCount(); i++) {
+                record = table.getRecordAt(i);
+                Integer id = record.getNumberValue("ID").intValue();
+                if (record.isMarkedDeleted()) continue; // null pointer if you try and read from a deleted record
+
+                if (employees.containsKey(id)) { // does this record have new data?
+                    Record newRecord = new Record(employees.get(id));
+                    table.updateRecordAt(i, newRecord, false);
+                    employees.remove(id); // remove them so that only new emp are left
+                    log.warn("Employee " + id + " updated.");
+                }
+            }
+            for (Map.Entry<Integer, Map<String, Value>> employee : employees.entrySet()) { // new employees
+                record = new Record(employee.getValue());
+                table.addRecord(record);
+                log.warn("Employee " + employee.getKey() + " added.");
             }
         } catch (IOException | DbfLibException e) {
             e.printStackTrace();

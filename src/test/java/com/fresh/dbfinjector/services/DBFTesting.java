@@ -100,11 +100,11 @@ public class DBFTesting {
             for (int i = 0; i < table.getRecordCount(); i++) {
                 final Record record = table.getRecordAt(i);
                 if (record.isMarkedDeleted()) continue;
-                if (record.getNumberValue("ID").intValue() == 109) {
+                if (record.getNumberValue("ID").intValue() == 8192) {
                     Map<String, Value> valueMap = new HashMap<>();
 
-                    valueMap.put("OWNERID", new StringValue("" + 1));
-                    valueMap.put("FIRSTNAME", new StringValue("Ronnie"));
+//                    valueMap.put("OWNERID", new StringValue("" + 1));
+                    valueMap.put("MIDDLENAME", new StringValue("J"));
 
                     Record newRecord = new Record(valueMap);
                     log.info("" + i);
@@ -150,7 +150,7 @@ public class DBFTesting {
             table.open(IfNonExistent.ERROR);
             final List<Field> fields = table.getFields();
             for (final Field field : fields) {
-                System.out.println(field.getLength());
+                System.out.println(field.getName() + " : " + field.getLength());
             }
 
         } catch (IOException | DbfLibException e) {

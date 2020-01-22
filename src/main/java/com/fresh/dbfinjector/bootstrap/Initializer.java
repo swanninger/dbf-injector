@@ -34,18 +34,18 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         log.warn("Injector Start.");
-//        employeeService.importEmployees();
+        employeeService.importEmployees();
 //        testProperties();
 //        updateEmployeeTest();
         log.warn("Injection complete.");
     }
 
     //Test classes
-    public void createEmployee() {
+    private void createEmployeeTest() {
 
     }
 
-    public void getFreshEmployees() {
+    private void getFreshEmployeesTest() {
         Iterable<FreshEmployee> freshEmployees = employeeService.getNewFreshEmployees();
 
         for (FreshEmployee freshEmployee : freshEmployees) {
@@ -54,11 +54,11 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
         }
     }
 
-    public void testProperties() {
+    private void testProperties() {
         log.warn(injectorConfig.getNewDataPath());
     }
 
-    public void updateEmployeeTest() {
+    private void updateEmployeeTest() {
         Map<String, Value> employeeData = new HashMap<>();
         employeeData.put("ID", new NumberValue(108));
         employeeData.put("OWNERID", new NumberValue(1));
