@@ -37,7 +37,7 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
         employeeService.importEmployees();
 //        testProperties();
 //        updateEmployeeTest();
-        log.warn("Injection complete.");
+//        log.warn("Injection complete.");
     }
 
     //Test classes

@@ -2,6 +2,7 @@ package com.fresh.dbfinjector.services;
 
 import nl.knaw.dans.common.dbflib.Value;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface EmpDBFService {
@@ -13,7 +14,7 @@ public interface EmpDBFService {
 
     void updateEmployee(Map<String, Value> employeeData);
 
-    void updateEmployees(Map<Integer, Map<String, Value>> employeeData);
+    void updateEmployees(Map<Integer, Map<String, Value>> employeeData) throws IOException;
 
     void addEmployee(Map<String, Value> employeeData);
 

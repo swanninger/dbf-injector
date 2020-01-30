@@ -69,7 +69,7 @@ public class EmpDBFServiceImpl implements EmpDBFService {
     }
 
     @Override
-    public void updateEmployees(Map<Integer, Map<String, Value>> employees) {
+    public void updateEmployees(Map<Integer, Map<String, Value>> employees) throws IOException {
         final Table table = new Table(new File(injectorConfig.getNewDataPath() + "emp.dbf"));
 
         try {
@@ -92,7 +92,7 @@ public class EmpDBFServiceImpl implements EmpDBFService {
                 table.addRecord(record);
                 log.warn("Employee " + employee.getKey() + " added.");
             }
-        } catch (IOException | DbfLibException e) {
+        } catch (DbfLibException e) {
             e.printStackTrace();
         } finally {
             try {

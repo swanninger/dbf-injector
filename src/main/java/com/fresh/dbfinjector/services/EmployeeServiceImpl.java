@@ -9,6 +9,7 @@ import nl.knaw.dans.common.dbflib.StringValue;
 import nl.knaw.dans.common.dbflib.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,17 +64,25 @@ public class EmployeeServiceImpl implements EmployeeService {
                     lastChecked = freshEmployee.getDtModified();
                 }
 
+                if (!injectorConfig.isImportNines()) {
+                    if (freshEmployee.getEmpId().contentEquals("9999")) continue; //skip tech acct
+                }
+
+
                 Map<String, Value> empData = convertToValueMap(freshEmployee);
                 employeeMap.put(Integer.parseInt(freshEmployee.getEmpId()), empData);
 
-                log.warn("Employee " + freshEmployee.getEmpId() + " added to map.");
+//                log.warn("Employee " + freshEmployee.getEmpId() + " added to map.");
 
             }
             empDBFService.updateEmployees(employeeMap);
             injectorConfig.setLastChecked(lastChecked);
             log.warn("Employees Updated");
 
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Error importing employees, file not found");
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             log.error("Error importing employees");
         }
