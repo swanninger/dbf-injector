@@ -18,6 +18,7 @@ public class InjectorConfig {
     private LocalDateTime lastChecked;
     private String newDataPath;
     private boolean importNines;
+    private boolean skipSsn;
 
     public InjectorConfig(ApplicationPropertyService applicationPropertyService) {
         this.applicationPropertyService = applicationPropertyService;

@@ -92,8 +92,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Map<String, Value> empData = new HashMap<>();
         empData.put("ID", new NumberValue(Integer.parseInt(freshEmployee.getEmpId() == null ? "0" : freshEmployee.getEmpId())));
         empData.put("USERNUMBER", new NumberValue(Integer.parseInt(freshEmployee.getEmpId() == null ? "0" : freshEmployee.getEmpId())));
-        empData.put("SSN", new NumberValue(000000000));
-        empData.put("SSNTEXT", new NumberValue(000000000));
+        if (!injectorConfig.isSkipSsn()){
+            empData.put("SSN", new NumberValue(000000000));
+            empData.put("SSNTEXT", new NumberValue(000000000));
+        }
+
         empData.put("FIRSTNAME", new StringValue(freshEmployee.getFName()));
         empData.put("LASTNAME", new StringValue(freshEmployee.getLName()));
         empData.put("NICKNAME", new StringValue(freshEmployee.getFName()));
