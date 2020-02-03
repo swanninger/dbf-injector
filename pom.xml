@@ -5,11 +5,13 @@
 
     <groupId>com.fresh</groupId>
     <artifactId>dbf-injector</artifactId>
-    <version>1.0.2</version>
-    <packaging>jar</packaging>
+    <version>1.0.0</version>
+    <packaging>
+        jar
+    </packaging>
 
     <name>dbf-injector</name>
-    <description>DB tool for New Aloha Manager</description>
+    <description>DBF Tool for Aloha</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -59,7 +61,7 @@
     </dependencies>
 
     <build>
-        <finalName>dbf-injector_1.0.0</finalName>
+        <finalName>dbf-injector</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
