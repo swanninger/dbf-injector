@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ConfigurationProperties(prefix = "injector")
 @Component
@@ -19,6 +20,8 @@ public class InjectorConfig {
     private String newDataPath;
     private boolean importNines;
     private boolean skipSsn;
+    private List<String> empIdsToSkip;
+
 
     public InjectorConfig(ApplicationPropertyService applicationPropertyService) {
         this.applicationPropertyService = applicationPropertyService;

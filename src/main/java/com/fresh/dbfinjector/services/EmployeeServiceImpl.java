@@ -59,15 +59,16 @@ public class EmployeeServiceImpl implements EmployeeService {
             Map<Integer, Map<String, Value>> employeeMap = new HashMap<>();
 
             for (FreshEmployee freshEmployee : employees) {
-                // See if this is the newest record and update last checked accordingly
-                if (freshEmployee.getDtModified().isAfter(lastChecked)) {
-                    lastChecked = freshEmployee.getDtModified();
-                }
+                if (injectorConfig.getEmpIdsToSkip().contains(freshEmployee.getEmpId())) continue; // check skip list
 
                 if (!injectorConfig.isImportNines()) {
                     if (freshEmployee.getEmpId().contentEquals("9999")) continue; //skip tech acct
                 }
 
+                // See if this is the newest record and update last checked accordingly
+                if (freshEmployee.getDtModified().isAfter(lastChecked)) {
+                    lastChecked = freshEmployee.getDtModified();
+                }
 
                 Map<String, Value> empData = convertToValueMap(freshEmployee);
                 employeeMap.put(Integer.parseInt(freshEmployee.getEmpId()), empData);
