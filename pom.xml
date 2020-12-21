@@ -61,7 +61,7 @@
     </dependencies>
 
     <build>
-        <finalName>dbf-injector</finalName>
+<!--        <finalName>dbf-injector</finalName>-->
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

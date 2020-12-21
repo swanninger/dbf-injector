@@ -36,6 +36,7 @@ public class FreshEmployee {
     private String imgName;
 
     private LocalDateTime dtModified;
+    private String magCard;
 
     private Short bohSecurity;
     private Short termCode;

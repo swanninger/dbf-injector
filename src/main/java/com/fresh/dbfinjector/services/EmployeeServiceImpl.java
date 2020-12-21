@@ -136,6 +136,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         empData.put("ACCESS9", new NumberValue(freshEmployee.getAccLvl9() == null ? 0 : freshEmployee.getAccLvl9()));
         empData.put("ACCESS10", new NumberValue(freshEmployee.getAccLvl10() == null ? 0 : freshEmployee.getAccLvl10()));
 
+        empData.put("MAGCARD", new StringValue(freshEmployee.getMagCard()));
+
         if (freshEmployee.getTermCode() == null) {
             empData.put("ZAPID", new NumberValue(0));
             empData.put("TERMINATED", new StringValue("N"));

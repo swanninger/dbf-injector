@@ -3,12 +3,11 @@ package com.fresh.dbfinjector.services;
 import com.fresh.dbfinjector.configuration.InjectorConfig;
 import lombok.extern.slf4j.Slf4j;
 import nl.knaw.dans.common.dbflib.*;
+import nl.knaw.dans.common.dbflib.Record;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -74,9 +73,9 @@ public class EmpDBFServiceImpl implements EmpDBFService {
 
         try {
             table.open();
-            Record record;
+            Record record; //row
             for (int i = 0; i < table.getRecordCount(); i++) {
-                record = table.getRecordAt(i);
+                record = table.getRecordAt(i); //next row
                 Integer id = record.getNumberValue("ID").intValue();
                 if (record.isMarkedDeleted()) continue; // null pointer if you try and read from a deleted record
 
