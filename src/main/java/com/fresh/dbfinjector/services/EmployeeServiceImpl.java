@@ -61,9 +61,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             for (FreshEmployee freshEmployee : employees) {
                 if (injectorConfig.getEmpIdsToSkip().contains(freshEmployee.getEmpId())) continue; // check skip list
 
-                if (!injectorConfig.isImportNines()) {
-                    if (freshEmployee.getEmpId().contentEquals("9999")) continue; //skip tech acct
-                }
+//                if (!injectorConfig.isImportNines()) { //depreciated
+//                    if (freshEmployee.getEmpId().contentEquals("9999")) continue; //skip tech acct
+//                }
 
                 // See if this is the newest record and update last checked accordingly
                 if (freshEmployee.getDtModified().isAfter(lastChecked)) {
@@ -136,7 +136,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         empData.put("ACCESS9", new NumberValue(freshEmployee.getAccLvl9() == null ? 0 : freshEmployee.getAccLvl9()));
         empData.put("ACCESS10", new NumberValue(freshEmployee.getAccLvl10() == null ? 0 : freshEmployee.getAccLvl10()));
 
-        empData.put("MAGCARD", new StringValue(freshEmployee.getMagCard()));
+        empData.put("MAGONLY", new StringValue(freshEmployee.getMagCard()));
 
         if (freshEmployee.getTermCode() == null) {
             empData.put("ZAPID", new NumberValue(0));
